@@ -1,0 +1,9 @@
+{
+    "printWidth": 140,
+    "tabWidth": 4,
+    "plugins": ["@trivago/prettier-plugin-sort-imports"],
+    "importOrder": ["^@/app(.*)$", "^@/pages(.*)$", "^@/widgets(.*)$", "^@/features(.*)$", "^@/entities(.*)$", "^@/shared(.*)$", "^[./]"],
+    "importOrderSeparation": true,
+    "importOrderSortSpecifiers": true,
+    "importOrderGroupNamespaceSpecifiers": true
+}
