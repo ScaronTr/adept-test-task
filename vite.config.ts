@@ -6,8 +6,8 @@ export default defineConfig({
     plugins: [react()],
     resolve: {
         alias: {
-            "@": "/client",
-            "@styles": "/client/app/styles",
+            "@": "/src",
+            "@styles": "/src/app/styles",
         },
     },
     server: {
