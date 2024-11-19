@@ -1,11 +1,12 @@
 import { type PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-import { INITIAL_COMPANIES } from "../lib";
-import type { Company } from "../types.ts";
+import { INITIAL_COMPANIES, getSelectedCompaniesMap } from "../lib";
+import type { Company, InitialState } from "../types.ts";
 
-const initialState = {
+const initialState: InitialState = {
     data: INITIAL_COMPANIES,
-    isSelectedAll: INITIAL_COMPANIES.every(({ selected }) => selected),
+    selected: [],
+    isSelectedAll: false,
 };
 
 export const companiesSlice = createSlice({
@@ -13,25 +14,46 @@ export const companiesSlice = createSlice({
     initialState,
     reducers: {
         setIsSelectedAllCompanies: (state, action: PayloadAction<boolean>) => {
+            state.selected = action.payload ? state.data.map(({ id }) => id) : [];
             state.isSelectedAll = action.payload;
-            state.data = state.data.map((company) => ({ ...company, selected: action.payload }));
         },
-        setSelectedCompany: (state, action: PayloadAction<{ id: Company["id"]; selected: Company["selected"] }>) => {
-            const newState = state.data.map((company) =>
-                company.id === action.payload.id ? { ...company, selected: action.payload.selected } : company,
-            );
-            state.isSelectedAll = newState.every(({ selected }) => selected);
-            state.data = newState;
+        setSelectedCompany: (state, action: PayloadAction<{ id: Company["id"]; selected: boolean }>) => {
+            if (action.payload.selected) {
+                state.selected.push(action.payload.id);
+                if (state.selected.length === state.data.length && !state.isSelectedAll) state.isSelectedAll = true;
+            } else {
+                state.selected = state.selected.filter((id) => id !== action.payload.id);
+                if (state.isSelectedAll) state.isSelectedAll = false;
+            }
+        },
+        addCompany: (state) => {
+            const id = state.data.length ? state.data[state.data.length - 1].id + 1 : 1;
+
+            if (state.isSelectedAll) state.selected.push(id);
+
+            state.data.push({
+                id,
+                name: "",
+                address: "",
+            });
+        },
+        deleteSelectedCompanies: (state) => {
+            const idsMap = getSelectedCompaniesMap(state.selected);
+
+            state.data = state.data.filter((company) => !idsMap[company.id]);
+            state.selected = [];
+            if (state.isSelectedAll) state.isSelectedAll = false;
         },
     },
     selectors: {
         selectCompanies: (state) => state.data,
+        selectSelectedCompanies: (state) => state.selected,
         selectIsSelectedAllCompanies: (state) => state.isSelectedAll,
     },
 });
 
-export const { setIsSelectedAllCompanies, setSelectedCompany } = companiesSlice.actions;
+export const { setIsSelectedAllCompanies, setSelectedCompany, addCompany, deleteSelectedCompanies } = companiesSlice.actions;
 
-export const { selectCompanies, selectIsSelectedAllCompanies } = companiesSlice.selectors;
+export const { selectCompanies, selectIsSelectedAllCompanies, selectSelectedCompanies } = companiesSlice.selectors;
 
 export const companiesReducer = companiesSlice.reducer;

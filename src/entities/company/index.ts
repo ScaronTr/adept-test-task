@@ -1,3 +1,3 @@
 export * from "./lib";
 export * from "./model";
-export * from "./types.ts";
+export type { Company } from "./types.ts";
