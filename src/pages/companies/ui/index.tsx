@@ -2,8 +2,10 @@ import { type ChangeEventHandler, useMemo } from "react";
 
 import {
     type Company,
+    type CompanyEditedFields,
     addCompany,
     deleteSelectedCompanies,
+    editCompany,
     getSelectedCompaniesMap,
     selectCompanies,
     selectIsSelectedAllCompanies,
@@ -24,6 +26,7 @@ export const CompaniesPage = () => {
     const handleSelectCompany = (id: Company["id"], selected: boolean) => dispatch(setSelectedCompany({ id, selected }));
     const handleAddCompany = () => dispatch(addCompany());
     const handleDeleteCompanies = () => dispatch(deleteSelectedCompanies());
+    const handleEditCompany = (id: number, field: CompanyEditedFields, value: string) => dispatch(editCompany({ id, field, value }));
 
     const selectedCompaniesMap = useMemo(() => getSelectedCompaniesMap(selectedCompanies), [selectedCompanies]);
 
@@ -61,8 +64,20 @@ export const CompaniesPage = () => {
                                     name="companies"
                                 />
                             </td>
-                            <td>{name}</td>
-                            <td>{address}</td>
+                            <td>
+                                <input
+                                    value={name}
+                                    onChange={(e) => handleEditCompany(id, "name", e.target.value)}
+                                    placeholder={"Название"}
+                                />
+                            </td>
+                            <td>
+                                <input
+                                    value={address}
+                                    onChange={(e) => handleEditCompany(id, "address", e.target.value)}
+                                    placeholder={"Адрес"}
+                                />
+                            </td>
                         </tr>
                     ))}
                 </tbody>

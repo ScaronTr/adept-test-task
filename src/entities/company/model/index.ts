@@ -1,7 +1,7 @@
 import { type PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 import { INITIAL_COMPANIES, getSelectedCompaniesMap } from "../lib";
-import type { Company, InitialState } from "../types.ts";
+import type { Company, CompanyEditedFields, InitialState } from "../types.ts";
 
 const initialState: InitialState = {
     data: INITIAL_COMPANIES,
@@ -44,6 +44,11 @@ export const companiesSlice = createSlice({
             state.selected = [];
             if (state.isSelectedAll) state.isSelectedAll = false;
         },
+        editCompany: (state, action: PayloadAction<{ id: Company["id"]; field: CompanyEditedFields; value: string }>) => {
+            state.data = state.data.map((company) =>
+                company.id === action.payload.id ? { ...company, [action.payload.field]: action.payload.value } : company,
+            );
+        },
     },
     selectors: {
         selectCompanies: (state) => state.data,
@@ -52,7 +57,7 @@ export const companiesSlice = createSlice({
     },
 });
 
-export const { setIsSelectedAllCompanies, setSelectedCompany, addCompany, deleteSelectedCompanies } = companiesSlice.actions;
+export const { setIsSelectedAllCompanies, setSelectedCompany, addCompany, deleteSelectedCompanies, editCompany } = companiesSlice.actions;
 
 export const { selectCompanies, selectIsSelectedAllCompanies, selectSelectedCompanies } = companiesSlice.selectors;
 

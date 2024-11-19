@@ -9,3 +9,5 @@ export type InitialState = {
     selected: Company["id"][];
     isSelectedAll: boolean;
 };
+
+export type CompanyEditedFields = Exclude<keyof Company, "id">;
