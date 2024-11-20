@@ -1,4 +1,4 @@
-import { type ChangeEventHandler, useMemo } from "react";
+import { type ChangeEventHandler, useCallback, useMemo, useState } from "react";
 
 import {
     type Company,
@@ -14,7 +14,10 @@ import {
     setSelectedCompany,
 } from "@/entities/company";
 
-import { useAppDispatch, useAppSelector } from "@/shared/hooks";
+import { useAppDispatch, useAppSelector, useObserver } from "@/shared/hooks";
+
+import { PER_PAGE } from "../../lib";
+import { TableRow } from "../table-row";
 
 export const CompaniesPage = () => {
     const companies = useAppSelector(selectCompanies);
@@ -22,13 +25,31 @@ export const CompaniesPage = () => {
     const isSelectedAllCompanies = useAppSelector(selectIsSelectedAllCompanies);
     const dispatch = useAppDispatch();
 
+    const [page, setPage] = useState(1);
+
     const handleSelectAllCompanies: ChangeEventHandler<HTMLInputElement> = (e) => dispatch(setIsSelectedAllCompanies(e.target.checked));
-    const handleSelectCompany = (id: Company["id"], selected: boolean) => dispatch(setSelectedCompany({ id, selected }));
+    const handleSelectCompany = useCallback(
+        (id: Company["id"], selected: boolean) => dispatch(setSelectedCompany({ id, selected })),
+        [dispatch],
+    );
     const handleAddCompany = () => dispatch(addCompany());
     const handleDeleteCompanies = () => dispatch(deleteSelectedCompanies());
-    const handleEditCompany = (id: number, field: CompanyEditedFields, value: string) => dispatch(editCompany({ id, field, value }));
+    const handleEditCompany = useCallback(
+        (id: number, field: CompanyEditedFields, value: string) => dispatch(editCompany({ id, field, value })),
+        [dispatch],
+    );
+    const handleObserveIntersection: IntersectionObserverCallback = (entries, observer) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                observer.disconnect();
+                setPage((page) => page + 1);
+            }
+        });
+    };
+    const { setObserverElementRef } = useObserver<HTMLTableRowElement>(handleObserveIntersection);
 
     const selectedCompaniesMap = useMemo(() => getSelectedCompaniesMap(selectedCompanies), [selectedCompanies]);
+    const slicedCompanies = useMemo(() => companies.slice(0, page * PER_PAGE), [companies, page]);
 
     return (
         <main>
@@ -54,31 +75,17 @@ export const CompaniesPage = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {companies.map(({ id, name, address }) => (
-                        <tr key={id}>
-                            <td>
-                                <input
-                                    checked={!!selectedCompaniesMap[id]}
-                                    onChange={(e) => handleSelectCompany(id, e.target.checked)}
-                                    type="checkbox"
-                                    name="companies"
-                                />
-                            </td>
-                            <td>
-                                <input
-                                    value={name}
-                                    onChange={(e) => handleEditCompany(id, "name", e.target.value)}
-                                    placeholder={"Название"}
-                                />
-                            </td>
-                            <td>
-                                <input
-                                    value={address}
-                                    onChange={(e) => handleEditCompany(id, "address", e.target.value)}
-                                    placeholder={"Адрес"}
-                                />
-                            </td>
-                        </tr>
+                    {slicedCompanies.map(({ id, name, address }, index) => (
+                        <TableRow
+                            key={id}
+                            ref={companies.length > PER_PAGE * page && slicedCompanies.length - 5 === index ? setObserverElementRef : null}
+                            id={id}
+                            checked={!!selectedCompaniesMap[id]}
+                            name={name}
+                            address={address}
+                            handleSelectCompany={handleSelectCompany}
+                            handleEditCompany={handleEditCompany}
+                        />
                     ))}
                 </tbody>
             </table>
