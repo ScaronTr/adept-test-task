@@ -62,9 +62,10 @@
 
 .tableCaption {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: 70px 1fr 70px;
     grid-template-areas: ". title buttons";
     align-items: center;
+    gap: 10px;
 
     .tableTitle {
         grid-area: title;
