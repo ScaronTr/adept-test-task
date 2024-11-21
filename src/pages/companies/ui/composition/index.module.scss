@@ -1,0 +1,129 @@
+@use "@styles/declarations";
+
+.main {
+    margin: 0 auto;
+    max-width: 1200px;
+
+    .pageTitle {
+        margin-bottom: 20px;
+    }
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+
+    caption {
+        padding-bottom: 20px;
+    }
+
+    thead {
+        border-bottom: 1px solid declarations.$colorBorder;
+    }
+
+    th {
+        padding: 12px 10px;
+
+        background-color: #fafafa;
+
+        &:first-child {
+            width: 36px;
+
+            border-radius: 8px 0 0 0;
+        }
+
+        &:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        &:not(&:last-child) {
+            position: relative;
+
+            &::after {
+                content: "";
+
+                position: absolute;
+                right: 0;
+                top: 0;
+
+                display: block;
+
+                width: 1px;
+                height: 100%;
+                padding: 10px 0;
+
+                background-color: declarations.$colorBorder;
+                background-clip: content-box;
+            }
+        }
+    }
+}
+
+.tableCaption {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: ". title buttons";
+    align-items: center;
+
+    .tableTitle {
+        grid-area: title;
+    }
+
+    .buttons {
+        grid-area: buttons;
+        display: flex;
+        gap: 10px;
+    }
+}
+
+.button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+
+    transition: declarations.$transition;
+
+    .buttonIcon {
+        width: 20px;
+        height: 20px;
+    }
+
+    &.addButton {
+        background-color: declarations.$colorPrimary;
+
+        color: #ffffff;
+
+        @media (hover: hover) {
+            &:hover {
+                background-color: declarations.$colorPrimaryHover;
+            }
+        }
+    }
+
+    &.deleteButton {
+        border: 1px solid declarations.$colorDanger;
+
+        color: declarations.$colorDanger;
+
+        &:disabled {
+            border-color: declarations.$colorBorder;
+
+            color: declarations.$colorBorder;
+
+            cursor: not-allowed;
+        }
+
+        @media (hover: hover) {
+            &:not(&:disabled):hover {
+                border-color: declarations.$colorDangerHover;
+
+                color: declarations.$colorDangerHover;
+            }
+        }
+    }
+}

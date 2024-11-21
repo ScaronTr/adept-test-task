@@ -1,0 +1,52 @@
+@use "@styles/declarations";
+
+.label {
+    position: relative;
+
+    display: block;
+
+    width: 16px;
+    height: 16px;
+    border: 1px solid declarations.$colorBorder;
+    border-radius: 4px;
+
+    transition: declarations.$transition;
+
+    &::after {
+        content: "";
+
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+        display: block;
+
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+
+        background-color: declarations.$colorPrimary;
+        opacity: 0;
+
+        transition: declarations.$transition;
+    }
+
+    &:has(.input:checked) {
+        border-color: declarations.$colorPrimary;
+
+        &::after {
+            opacity: 1;
+        }
+    }
+
+    @media (hover: hover) {
+        &:hover {
+            border-color: declarations.$colorPrimary;
+        }
+    }
+
+    .input {
+        display: none;
+    }
+}

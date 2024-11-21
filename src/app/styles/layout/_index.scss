@@ -1,3 +1,14 @@
+@use "../declarations";
+
 html {
     font-family: Inter, Arial, sans-serif;
+    color: declarations.$colorText;
+}
+
+body {
+    padding: 30px;
+}
+
+input {
+    color: declarations.$colorText;
 }

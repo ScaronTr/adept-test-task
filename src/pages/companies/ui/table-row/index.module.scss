@@ -1,0 +1,34 @@
+@use "@styles/declarations";
+
+.row {
+    border-bottom: 1px solid declarations.$colorBorder;
+
+    td {
+        padding: 10px;
+
+        .input {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid transparent;
+            border-radius: 6px;
+
+            transition: declarations.$colorText;
+
+            &:focus {
+                outline: none;
+
+                border-color: declarations.$colorPrimary;
+            }
+
+            @media (hover: hover) {
+                &:hover {
+                    border-color: declarations.$colorBorder;
+
+                    &:focus {
+                        border-color: declarations.$colorPrimary;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -14,10 +14,12 @@ import {
     setSelectedCompany,
 } from "@/entities/company";
 
-import { useAppDispatch, useAppSelector, useObserver } from "@/shared/hooks";
+import { cn, useAppDispatch, useAppSelector, useObserver } from "@/shared/lib";
+import { Icon, UICheckbox } from "@/shared/ui";
 
 import { PER_PAGE } from "../../lib";
 import { TableRow } from "../table-row";
+import style from "./index.module.scss";
 
 export const CompaniesPage = () => {
     const companies = useAppSelector(selectCompanies);
@@ -52,23 +54,30 @@ export const CompaniesPage = () => {
     const slicedCompanies = useMemo(() => companies.slice(0, page * PER_PAGE), [companies, page]);
 
     return (
-        <main>
-            <h1>Список компаний</h1>
-            <table>
+        <main className={style.main}>
+            <h1 className={style.pageTitle}>Список компаний</h1>
+            <table className={style.table}>
                 <caption>
-                    <span>Компании</span>
-                    <button onClick={handleAddCompany}>Добавить</button>
-                    <button onClick={handleDeleteCompanies} disabled={selectedCompanies.length === 0}>
-                        Удалить
-                    </button>
+                    <div className={style.tableCaption}>
+                        <h2 className={style.tableTitle}>Компании</h2>
+                        <div className={style.buttons}>
+                            <button onClick={handleAddCompany} className={cn(style.button, style.addButton)}>
+                                <Icon name="plus" className={style.buttonIcon} />
+                            </button>
+                            <button
+                                onClick={handleDeleteCompanies}
+                                disabled={selectedCompanies.length === 0}
+                                className={cn(style.button, style.deleteButton)}
+                            >
+                                <Icon name="bin" className={style.buttonIcon} />
+                            </button>
+                        </div>
+                    </div>
                 </caption>
                 <thead>
                     <tr>
                         <th>
-                            <label>
-                                <input checked={isSelectedAllCompanies} onChange={handleSelectAllCompanies} type="checkbox" />
-                                Выбрать всё
-                            </label>
+                            <UICheckbox checked={isSelectedAllCompanies} onChange={handleSelectAllCompanies} />
                         </th>
                         <th>Название</th>
                         <th>Адрес</th>
